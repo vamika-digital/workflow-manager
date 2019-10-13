@@ -1,7 +1,7 @@
 {
     "name": "vamikadigital/workflowmanager",
     "description": ":description",
-    "license": "license",
+    "license": "0BSD",
     "authors": [
         {
             "name": "Vivek Singh",
