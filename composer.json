@@ -1,0 +1,43 @@
+{
+    "name": "vamikadigital/workflowmanager",
+    "description": ":description",
+    "license": "license",
+    "authors": [
+        {
+            "name": "Vivek Singh",
+            "email": "viveksingh0143@gmail.com",
+            "homepage": "https://vamikadigital.com"
+        }
+    ],
+    "homepage": "https://github.com/vamikadigital/workflowmanager",
+    "keywords": ["Laravel", "WorkflowManager"],
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3.0",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "VamikaDigital\\WorkflowManager\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VamikaDigital\\WorkflowManager\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "VamikaDigital\\WorkflowManager\\WorkflowManagerServiceProvider"
+            ],
+            "aliases": {
+                "WorkflowManager": "VamikaDigital\\WorkflowManager\\Facades\\WorkflowManager"
+            }
+        }
+    }
+}
