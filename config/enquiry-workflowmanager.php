@@ -2,16 +2,15 @@
 
 return [
     'property_path' => 'last_stage',
-    'property_path_name' => 'last_stage_text',
     'transitions' => [
-        'enquiry_open' => [
+        'enquiry_reopen' => [
             'accept' => [
                 'enquiry_sales_approval' => [
                     'rolename' => '*',
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\SalesApproval'],
                     ],
                     'validators' => [],
                 ]
@@ -22,7 +21,31 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\SalesReject'],
+                    ],
+                    'validators' => [],
+                ],
+            ],
+        ],
+        'enquiry_open' => [
+            'accept' => [
+                'enquiry_sales_approval' => [
+                    'rolename' => '*',
+                    'extra' => [],
+                    'callbacks' => [
+                        'pre' => [],
+                        'post' => ['Notification\SalesApproval'],
+                    ],
+                    'validators' => [],
+                ]
+            ],
+            'reject' => [
+                'enquiry_close' => [
+                    'rolename' => '*',
+                    'extra' => [],
+                    'callbacks' => [
+                        'pre' => [],
+                        'post' => ['Notification\SalesReject'],
                     ],
                     'validators' => [],
                 ],
@@ -38,7 +61,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\EnggApproval'],
                     ],
                     'validators' => [],
                 ],
@@ -50,7 +73,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\QuotationReady'],
                     ],
                     'validators' => [],
                 ],
@@ -61,7 +84,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\SalesApproval'],
                     ],
                     'validators' => [],
                 ],
@@ -70,7 +93,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\EnquiryClosed'],
                     ],
                     'validators' => [],
                 ],
@@ -94,7 +117,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\EnggApproval'],
                     ],
                     'validators' => [],
                 ],
@@ -103,7 +126,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\EnquiryClosed'],
                     ],
                     'validators' => [],
                 ],
@@ -116,7 +139,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\EnggAcknowledge'],
                     ],
                     'validators' => [],
                 ],
@@ -127,7 +150,7 @@ return [
                     'extra' => [],
                     'callbacks' => [
                         'pre' => [],
-                        'post' => [],
+                        'post' => ['Notification\QuotationReady'],
                     ],
                     'validators' => [],
                 ],
@@ -135,6 +158,10 @@ return [
         ],
     ],
     'stages' => [
+        'enquiry_reopen' => [
+            'text' => 'Re-Open',
+            'extra' => []
+        ],
         'enquiry_open' => [
             'text' => 'Open',
             'extra' => []

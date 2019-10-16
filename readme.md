@@ -42,7 +42,7 @@ If you discover any security related issues, please email viveksingh0143@gmail.c
 
 ## License
 
-license. Please see the [license file](license.md) for more information.
+0BSD. Please see the [license file](license.md) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/vamikadigital/workflowmanager.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/vamikadigital/workflowmanager.svg?style=flat-square
