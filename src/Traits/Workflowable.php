@@ -2,6 +2,7 @@
 
 namespace VamikaDigital\WorkflowManager\Traits;
 
+use Illuminate\Support\Facades\Log;
 use VamikaDigital\WorkflowManager\Models\WorkflowHistory;
 use VamikaDigital\WorkflowManager\WorkflowManager;
 
@@ -11,6 +12,10 @@ trait Workflowable
      * StateMachine.
      */
     protected $workflowInstance;
+    /**
+     * Transition Other Data.
+     */
+    protected $otherData;
 
     /**
      * Create a singleton StateMachine instance form the specified config.
@@ -24,6 +29,10 @@ trait Workflowable
             $this->workflowInstance = new WorkflowManager($this, $this->getWorkflowStages());
         }
         return $this->workflowInstance;
+    }
+
+    public function otherData() {
+        return $this->otherData;
     }
 
     /**
@@ -95,8 +104,9 @@ trait Workflowable
      * @return mixed
      * @throws \Exception
      */
-    public function transition($transition, $rolename)
+    public function transition($transition, $rolename, $otherData = null)
     {
+        $this->otherData = $otherData;
         return $this->workflowInstance()->apply($transition, $rolename);
     }
 
@@ -105,7 +115,7 @@ trait Workflowable
      *
      * @return mixed
      */
-    public function history()
+    public function histories()
     {
         return $this->hasMany(WorkflowHistory::class, 'model_id', 'id');
     }
@@ -130,7 +140,7 @@ trait Workflowable
     {
         $transitionData['user_id'] = auth()->id();
         $transitionData['model_name'] = get_class();
-        return $this->history()->create($transitionData);
+        return $this->histories()->create($transitionData);
     }
 
     /**

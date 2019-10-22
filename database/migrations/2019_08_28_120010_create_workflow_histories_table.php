@@ -18,6 +18,7 @@ class CreateWorkflowHistoriesTable extends Migration
             $table->string('model_name')->index();
             $table->unsignedBigInteger('model_id')->index();
             $table->string('transition');
+            $table->string('comment', 2000)->nullable();
             $table->string('from')->nullable();
             $table->string('from_text')->nullable();
             $table->unsignedBigInteger('user_id')->nullable()->index();

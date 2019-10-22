@@ -17,7 +17,6 @@ class CreateWorkflowApproversTable extends Migration
             $table->unsignedBigInteger("approvable_id")->index();
             $table->string("approvable_type")->index();
             $table->unsignedBigInteger("approver_id")->index();
-            $table->timestamps();
         });
     }
 

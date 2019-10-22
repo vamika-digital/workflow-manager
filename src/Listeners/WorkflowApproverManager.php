@@ -27,6 +27,7 @@ class WorkflowApproverManager
             'from' => $event->getStage(),
             'from_text' => $event->getStageName(),
             'approver_roles' => $roles,
+            'approver_validations' => isset($event->getConfig()['approver_validations']) ? $event->getConfig()['approver_validations'] : []
         ]);
     }
 }

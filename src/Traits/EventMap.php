@@ -4,6 +4,7 @@ namespace VamikaDigital\WorkflowManager\Traits;
 use VamikaDigital\WorkflowManager\Events\WorkflowEvents;
 use VamikaDigital\WorkflowManager\Listeners\WorkflowApproverManager;
 use VamikaDigital\WorkflowManager\Listeners\WorkflowHistoryManager;
+use VamikaDigital\WorkflowManager\Listeners\WorkflowNotificationManager;
 
 trait EventMap
 {
@@ -15,7 +16,7 @@ trait EventMap
     protected $events = [
         WorkflowEvents::POST_TRANSITION => [
             WorkflowApproverManager::class,
-            WorkflowHistoryManager::class
+            WorkflowHistoryManager::class,
         ],
         WorkflowEvents::PRE_TRANSITION => [
         ],

@@ -59,10 +59,10 @@ class WorkflowManager implements WorkflowContract
      */
     public function can($transition, $rolename)
     {
-        Log::info("Current Stage: " . $this->getCurrentStage());
         if (! isset($this->configuration['transitions'][$this->getCurrentStage()])) {
             throw new WorkflowException(__('workflow::exception.missing_transition', ['transition' => $transition, 'stage' => $this->getCurrentStage()]));
         }
+        Log::info($this->getCurrentStage() . " $transition");
         if (!isset($this->configuration['transitions'][$this->getCurrentStage()][$transition]) && empty($rolename)) {
             return false;
         }
@@ -87,11 +87,20 @@ class WorkflowManager implements WorkflowContract
     {
         if ($this->can($transition, $rolename)) {
             $nextStages = collect($this->configuration['transitions'][$this->getCurrentStage()][$transition]);
-            $nextStageConfigs = $nextStages->whereIn('rolename', [$rolename, '*'])->map(function ($value, $key) use ($rolename) {
-                $value['stage_key'] = $key;
-                $value['rolename'] = $rolename;
-                return $value;
-            })->first();
+            $nextStageConfigs = $nextStages->whereIn('rolename', [$rolename, '*'])
+                ->filter(function ($configs, $key) {
+                    if (!isset($configs['validations']) || count($configs['validations']) <= 0) {
+                        return true;
+                    } else {
+                        $validations = $configs['validations'];
+                        return $this->object->isValidWorkflowValidation($validations);
+                    }
+                })
+                ->map(function ($value, $key) use ($rolename) {
+                    $value['stage_key'] = $key;
+                    $value['rolename'] = $rolename;
+                    return $value;
+                })->first();
             tap($this->setWorkflowEvent($transition, $nextStageConfigs), function ($event) use ($nextStageConfigs) {
                 $this->firePreEvents($event)
                     ->updateCurrentStage($nextStageConfigs)
