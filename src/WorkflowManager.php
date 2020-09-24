@@ -18,22 +18,22 @@ class WorkflowManager implements WorkflowContract
      * @var
      */
     protected $object;
-    
+
     /**
      * Configuration array.
      */
     protected $configuration;
-    
+
     /**
      * @var
      */
     protected $callbackFactory;
-    
+
     /**
      * @var array
      */
     protected $validatorErrors = [];
-    
+
     /**
      * WorkflowManager constructor.
      * @param $object
@@ -59,10 +59,9 @@ class WorkflowManager implements WorkflowContract
      */
     public function can($transition, $rolename)
     {
-        if (! isset($this->configuration['transitions'][$this->getCurrentStage()])) {
+        if (!isset($this->configuration['transitions'][$this->getCurrentStage()])) {
             throw new WorkflowException(__('workflow::exception.missing_transition', ['transition' => $transition, 'stage' => $this->getCurrentStage()]));
         }
-        Log::info($this->getCurrentStage() . " $transition");
         if (!isset($this->configuration['transitions'][$this->getCurrentStage()][$transition]) && empty($rolename)) {
             return false;
         }
@@ -97,7 +96,7 @@ class WorkflowManager implements WorkflowContract
                     }
                 })
                 ->map(function ($value, $key) use ($rolename) {
-                    $value['stage_key'] = $key;
+                    $value['stage_key'] = $value['next_stage'];
                     $value['rolename'] = $rolename;
                     return $value;
                 })->first();
@@ -106,7 +105,7 @@ class WorkflowManager implements WorkflowContract
                     ->updateCurrentStage($nextStageConfigs)
                     ->firePostEvents($event);
             });
-        }
+        } else { }
     }
 
     /**
@@ -151,6 +150,22 @@ class WorkflowManager implements WorkflowContract
     }
 
     /**
+     * Return the possible transaction configs which are available from the
+     * current stage.
+     *
+     * @return array
+     */
+    public function getConfigsForPossibleTransitions()
+    {
+        $stage = $this->getCurrentStage();
+        $result = [];
+        if (isset($this->configuration['configs'][$stage])) {
+            $result = $this->configuration['configs'][$stage];
+        }
+        return $result;
+    }
+
+    /**
      * Set a new stage to the underlying object.
      *
      * @param string $stage
@@ -162,7 +177,7 @@ class WorkflowManager implements WorkflowContract
     protected function updateCurrentStage($nextStageConfigs)
     {
         $stage = $nextStageConfigs['stage_key'];
-        if (! array_key_exists($stage, $this->configuration['stages'])) {
+        if (!array_key_exists($stage, $this->configuration['stages'])) {
             throw new WorkflowException(__('workflow::exception.missing_stage', ['stage' => $stage]));
         }
         $stageName = $this->configuration['stages'][$stage]['text'];
@@ -180,7 +195,7 @@ class WorkflowManager implements WorkflowContract
     protected function firePreEvents($event)
     {
         event(WorkflowEvents::PRE_TRANSITION, $event);
-        if (! $this->callValidators($event)) {
+        if (!$this->callValidators($event)) {
             throw WorkflowValidatorException::withMessages($this->validatorErrors);
         }
         $this->callCallbacks($event, 'pre');
@@ -204,11 +219,11 @@ class WorkflowManager implements WorkflowContract
      */
     protected function callCallbacks($event, $position)
     {
-        if (! isset($event->getConfig()['callbacks'][$position]) || count($event->getConfig()['callbacks'][$position]) <= 0) {
+        if (!isset($event->getConfig()['callbacks'][$position]) || count($event->getConfig()['callbacks'][$position]) <= 0) {
             return true;
         }
         foreach ($event->getConfig()['callbacks'][$position] as $key => &$callback) {
-            if ((! class_exists($callback)) && (! $callback instanceof WorkflowCallbackContract)) {
+            if ((!class_exists($callback)) && (!$callback instanceof WorkflowCallbackContract)) {
                 report(new WorkflowException(__('workflow::exception.missing_callback', ['callback' => $callback])));
                 continue;
             }
@@ -222,12 +237,12 @@ class WorkflowManager implements WorkflowContract
      */
     protected function callValidators($event)
     {
-        if (! isset($event->getConfig()['validators']) || count($event->getConfig()['validators']) <= 0) {
+        if (!isset($event->getConfig()['validators']) || count($event->getConfig()['validators']) <= 0) {
             return true;
         }
         foreach ($event->getConfig()['validators'] as $key => $rules) {
             $class = is_numeric($key) ? WorkflowValidator::class : $key;
-            if ((! class_exists($class)) && (! $class instanceof WorkflowValidatorContract)) {
+            if ((!class_exists($class)) && (!$class instanceof WorkflowValidatorContract)) {
                 array_push($this->validatorErrors, [[__('workflow::validation.missing_validator_class', ['class' => $class])]]);
                 continue;
             }
